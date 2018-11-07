@@ -152,6 +152,9 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
             //为了画indicator，所以最后一个child需要设置距离底部的距离
             lp.bottomMargin = (int) convertDimension(3);
             child.setLayoutParams(lp);
+
+            //初始化indicator
+            initIndicator();
         }
     }
 
@@ -321,8 +324,6 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
             this.addView(linearLayout);
             linearLayout.addView(tabText);
         }
-        //初始化indicator
-        initIndicator();
         Log.d(TAG, "childCount: " + getChildCount());
     }
 
