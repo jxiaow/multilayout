@@ -65,12 +65,22 @@ mMultiLayout.setTabNames(tabNames);
 mViewPager.setAdapter(mCatalogAdapter);
 mMultiLayout.setupWithViewPager(mViewPager);
 ```
+添加`TabText`的点击事件：
 
-
+```java
+/**
+  * 设置Tab选择监听事件
+  *
+  * @param onTabSelectListener tab监听事件
+  */
+  public void setOnTabSelectListener(OnTabSelectListener onTabSelectListener) {
+      this.mOnTabSelectListener = onTabSelectListener;
+  }
+```
 
 ## 截图
 
-![img](https://github.com/ixiaow/multilayout/tree/master/library/demo.gif)
+![img](https://github.com/ixiaow/multilayout/blob/master/picture/demo.gif)
 
 ## Demo
 
