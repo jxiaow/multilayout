@@ -2,6 +2,7 @@ package com.ixiaow.multilayout;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.database.DataSetObserver;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -62,6 +63,8 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
     private int mTabHeight;
     //最小的tabMargin
     private float mTabMinMargin = 0;
+
+    private MultiLayoutDataSetObserver mDataSetObserver = new MultiLayoutDataSetObserver();
 
     /**
      * 设置Tab选择监听事件
@@ -247,6 +250,7 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
         if (adapter == null) {//如果为空则什么都不做
             return false;
         }
+
         /*
          * 获取adapter中的数据个数，然后遍历数据获取pageTitle
          */
@@ -257,6 +261,7 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
             tabNames.add((String) title);
         }
         setTabNames(tabNames);
+        adapter.registerDataSetObserver(mDataSetObserver);
         return true;
     }
 
@@ -497,6 +502,14 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
     public void onAdapterChanged(@NonNull ViewPager viewPager, @Nullable PagerAdapter oldAdapter,
                                  @Nullable PagerAdapter newAdapter) {
         setTabNamesByAdapter(viewPager);
+    }
+
+    private class MultiLayoutDataSetObserver extends DataSetObserver {
+        @Override
+        public void onChanged() {
+            super.onChanged();
+            setTabNamesByAdapter(mViewPager);
+        }
     }
 
     /**

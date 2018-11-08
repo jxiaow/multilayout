@@ -50,10 +50,26 @@ public class TwoFragment extends Fragment {
         mTopicLayout = view.findViewById(R.id.topic_layout);
 //        mTopicLayout.setTabNames(Arrays.asList(TAB_NAMES));
         mViewPager = view.findViewById(R.id.viewPager);
-
-        mViewPager.setAdapter(new TopicAdapter());
+        final TopicAdapter topicAdapter = new TopicAdapter();
+        mViewPager.setAdapter(topicAdapter);
         mTopicLayout.setupWithViewPager(mViewPager);
 
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        topicAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        }.start();
     }
 
     private static class TopicAdapter extends PagerAdapter {
