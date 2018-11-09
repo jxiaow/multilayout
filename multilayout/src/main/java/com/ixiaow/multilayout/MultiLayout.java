@@ -161,6 +161,9 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
 
             //初始化indicator
             initIndicator();
+
+            //默认选择第一个
+            selectTabText(mTabTextList.get(0), 0);
         }
     }
 
@@ -301,12 +304,6 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
         for (String tabName : mTabNames) {
             TextView tabText = newTabText(tabName);
             mTabTextList.add(tabText);
-            //如果等于0，说明是第一个控件
-            if (mViewWidth == 0) {
-                tabText.setSelected(true);//第一个控件默认选中
-                mCurrentTabText = tabText;//当前控件
-            }
-
             //测量控件
             measureTabText(tabText);
 
