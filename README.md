@@ -28,9 +28,10 @@ allprojects {
 
 ```groovy
 dependencies {
-    implementation 'com.github.ixiaow:multilayout:12f3374a0e'
+    implementation 'com.github.ixiaow:multilayout:x.y.z'
 }
 ```
+(请替换 x、 y and z 为最新的版本号: ![](https://jitpack.io/v/ixiaow/multilayout.svg) )
 
 ### Step2
 
