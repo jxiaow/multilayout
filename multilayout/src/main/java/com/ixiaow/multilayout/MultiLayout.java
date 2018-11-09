@@ -66,6 +66,7 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
 
     //ViewPager数据变化监听
     private MultiLayoutDataSetObserver mDataSetObserver;
+    private Paint mTextPaint;
 
     /**
      * 设置Tab选择监听事件
@@ -347,9 +348,11 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
         if (childCount > 0) {
             TextView child = (TextView) linearLayout.getChildAt(0);
             //测量text
-            Paint paint = new Paint();
-            paint.setTextSize(child.getTextSize());
-            float measureText = paint.measureText(child.getText().toString());
+            if (mTextPaint == null) {
+                mTextPaint = new Paint();
+                mTextPaint.setTextSize(child.getTextSize());
+            }
+            float measureText = mTextPaint.measureText(child.getText().toString());
             //设置indicator的左边距离
             mIndicatorRectF.left = (child.getMeasuredWidth() - measureText) / 2f;
             //设置indicator的上边距离
@@ -416,16 +419,18 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
     /**
      * 更新indicator的位置
      *
-     * @param v        当前点击的tabText
+     * @param textView 当前点击的tabText
      * @param position tabText的位置，此位置是每一行对应的位置
      */
-    private void updateIndicator(View v, int position) {
+    private void updateIndicator(TextView textView, int position) {
         Log.d(TAG, "updateIndicator");
-        LayoutParams params = (LayoutParams) v.getLayoutParams();
+        LayoutParams params = (LayoutParams) textView.getLayoutParams();
         int leftMargin = params.width;
-        int x = (int) ((leftMargin + mTabMinMargin) * position);//设置x轴移动的距离
+        float measureText = mTextPaint.measureText(textView.getText().toString());
+        float textMargin = (leftMargin - measureText) / 2;
+        int x = (int) ((leftMargin + mTabMinMargin + textMargin) * position);//设置x轴移动的距离
 
-        int indexOfChild = indexOfChild((View) v.getParent());
+        int indexOfChild = indexOfChild((View) textView.getParent());
         int y = params.height * indexOfChild;//设置y轴移动的距离
 
         if ((x != 0 || y != 0) && mIndicatorTranslateX == x && mIndicatorTranslateY == y) {
@@ -455,7 +460,7 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
         //tabText点击时，如果ViewPager不为空则需要与其联动
         int index = mTabNames.indexOf(textView.getText().toString());
         if (mViewPager != null) {
-            mViewPager.setCurrentItem(index);
+            mViewPager.setCurrentItem(index, true);
         } else { //如果ViewPager为空则自己处理状态选择事件
             selectTabText(textView, index);
         }
@@ -492,17 +497,19 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
 
     @Override
     public void onPageSelected(int position) {
-        //根据viewPager页面切换时回调次方法，所以可以通过position获得tabText
-        if (mTabTextList == null || mTabTextList.isEmpty()) {
-            return;
-        }
-        TextView textView = mTabTextList.get(position);
-        selectTabText(textView, position);
     }
 
     @Override
     public void onPageScrollStateChanged(int state) {
-
+        if (state == ViewPager.SCROLL_STATE_SETTLING) {
+            //根据viewPager页面切换时回调次方法，所以可以通过position获得tabText
+            if (mTabTextList == null || mTabTextList.isEmpty()) {
+                return;
+            }
+            int currentItem = mViewPager.getCurrentItem();
+            TextView textView = mTabTextList.get(currentItem);
+            selectTabText(textView, currentItem);
+        }
     }
 
 
