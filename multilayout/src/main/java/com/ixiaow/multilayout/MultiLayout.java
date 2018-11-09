@@ -450,11 +450,11 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
         }
         TextView textView = (TextView) v;
         //tabText点击时，如果ViewPager不为空则需要与其联动
+        int index = mTabNames.indexOf(textView.getText().toString());
         if (mViewPager != null) {
-            int index = mTabNames.indexOf(textView.getText().toString());
             mViewPager.setCurrentItem(index);
         } else { //如果ViewPager为空则自己处理状态选择事件
-            selectTabText(textView);
+            selectTabText(textView, index);
         }
     }
 
@@ -462,8 +462,9 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
      * 选择TabText
      *
      * @param textView tabText
+     * @param index    当前textView在集合中的下标
      */
-    private void selectTabText(TextView textView) {
+    private void selectTabText(TextView textView, int index) {
         textView.setSelected(true);//将其置为选择状态
         if (mCurrentTabText != null) {
             mCurrentTabText.setSelected(false);//取消前一个的选择状态
@@ -475,7 +476,7 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
         //更新indicator
         updateIndicator(textView, position);
         if (mOnTabSelectListener != null) {//监听事件
-            mOnTabSelectListener.select(textView, position);
+            mOnTabSelectListener.select(textView, position, index);
         }
     }
 
@@ -490,7 +491,7 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
     public void onPageSelected(int position) {
         //根据viewPager页面切换时回调次方法，所以可以通过position获得tabText
         TextView textView = mTabTextList.get(position);
-        selectTabText(textView);
+        selectTabText(textView, position);
     }
 
     @Override
@@ -542,7 +543,8 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
          *
          * @param tabText  当前选中的tabText
          * @param position 当前选择tabText的相对位置
+         * @param index    当前选择的集合中的绝对位置
          */
-        void select(TextView tabText, int position);
+        void select(TextView tabText, int position, int index);
     }
 }
