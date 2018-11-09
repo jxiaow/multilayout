@@ -127,6 +127,9 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
                 MultiLayout.this.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 //获取当前控件的大小
                 mTopicLayoutWidth = getMeasuredWidth();
+                if (mTopicLayoutWidth == 0) {
+                    return;
+                }
                 /*
                  * 更新tabs
                  * 这个方法本来是可以在onMeasure或者onLayout中执行的，
@@ -143,7 +146,6 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
         super.onLayout(changed, l, t, r, b);
         if (changed && !isOnce && getChildCount() > 0) {//当tab全部添加完毕后，会调用此方法
             isOnce = true;//将其置为true,保证此方法只会调用一次
-
             //遍历所有的tabText，设置右边的margin
             for (TextView textView : mTabTextList) {
                 LayoutParams layoutParams = (LayoutParams) textView.getLayoutParams();
@@ -169,6 +171,11 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
         if (isOnce || childCount <= 0) { //防止多次测量
             return;
         }
+        mTopicLayoutWidth = getMeasuredWidth();
+        if (mTopicLayoutWidth == 0) {
+            return;
+        }
+
         Log.d(TAG, "onMeasure");
         //遍历当前控件的所有子控件
         for (int i = 0; i < childCount; i++) {
@@ -251,6 +258,7 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
      * @param adapter {@link ViewPager#getAdapter()}
      */
     private void setTabNamesByAdapter(PagerAdapter adapter) {
+        Log.d(TAG, "setTabNames");
         /*
          * 获取adapter中的数据个数，然后遍历数据获取pageTitle
          */
@@ -319,7 +327,7 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
             }
 
             /*
-             *   linearLayout不能再添加tabText时，需要将linearLayout加入到当前控件中，然后重新创建linearLayout
+             * linearLayout不能再添加tabText时，需要将linearLayout加入到当前控件中，然后重新创建linearLayout
              */
             mViewWidth = width;
             linearLayout = newLinearLayout();
@@ -490,6 +498,9 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
     @Override
     public void onPageSelected(int position) {
         //根据viewPager页面切换时回调次方法，所以可以通过position获得tabText
+        if (mTabTextList == null || mTabTextList.isEmpty()) {
+            return;
+        }
         TextView textView = mTabTextList.get(position);
         selectTabText(textView, position);
     }
@@ -520,6 +531,7 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
         @Override
         public void onChanged() {//adapter数据更新后会调用此方法
             super.onChanged();
+            Log.d(TAG, "update data");
             notifyDataSetChange();
         }
     }
