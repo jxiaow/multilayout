@@ -167,18 +167,17 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int childCount = getChildCount();
-        if (isOnce || childCount <= 0) { //防止多次测量
+        if (isOnce) { //防止多次测量
             return;
         }
         mTopicLayoutWidth = getMeasuredWidth();
         if (mTopicLayoutWidth == 0) {
             return;
         }
-
+        updateTabs();
         Log.d(TAG, "onMeasure");
         //遍历当前控件的所有子控件
-        for (int i = 0; i < childCount; i++) {
+        for (int i = 0; i < getChildCount(); i++) {
 
             LinearLayout linearLayout = (LinearLayout) getChildAt(i);
             if (linearLayout.getChildCount() <= 0) {
@@ -227,7 +226,6 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
             mTabNames.clear();
         }
         mTabNames = tabNames;//tabs赋值
-        updateTabs();//更新tab
         isOnce = false;//如果新更新了tab，则需要重新测量和布局
         requestLayout();//请求测量和布局
     }
