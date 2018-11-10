@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MultiLayout">
+        <attr name="tab_text_size" format="dimension" />
+        <attr name="tab_text_width" format="dimension" />
+        <attr name="tab_text_height" format="dimension" />
+        <attr name="tab_text_select_color" format="color" />
+        <attr name="tab_text_unselect_color" format="color" />
+        <attr name="tab_indicator_color" format="color" />
+        <attr name="tab_indicator_width" format="dimension" />
+        <attr name="tab_indicator_height" format="dimension" />
+        <attr name="tab_indicator_radius" format="dimension" />
+    </declare-styleable>
+</resources>

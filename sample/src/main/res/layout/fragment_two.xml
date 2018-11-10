@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -13,7 +14,13 @@
     <com.ixiaow.multilayout.MultiLayout
         android:id="@+id/topic_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        app:tab_indicator_color="@color/colorAccent"
+        app:tab_indicator_height="5dp"
+        app:tab_indicator_radius="5dp"
+        app:tab_text_select_color="@color/colorAccent"
+        app:tab_text_size="14sp"
+        app:tab_text_unselect_color="@color/colorPrimary" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewPager"

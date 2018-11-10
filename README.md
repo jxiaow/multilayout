@@ -10,6 +10,10 @@
 * 可以和ViewPager联合使用
 * 具备TabLayout的相关功能
 
+## 截图
+
+![img](https://github.com/ixiaow/multilayout/blob/master/picture/demo.gif)
+
 ## 用法
 
 ### Step 1
@@ -31,7 +35,7 @@ dependencies {
     implementation 'com.github.ixiaow:multilayout:x.y.z'
 }
 ```
-(请替换 x、 y and z 为最新的版本号: ![](https://jitpack.io/v/ixiaow/multilayout.svg) )
+(请替换 x. y .z 为最新的版本号: ![](https://jitpack.io/v/ixiaow/multilayout.svg) )
 
 ### Step2
 
@@ -39,9 +43,15 @@ dependencies {
 
 ```xml
 <com.ixiaow.multilayout.MultiLayout
-     android:id="@+id/multi_layout"
+     android:id="@+id/topic_layout"
      android:layout_width="match_parent"
-     android:layout_height="wrap_content" />
+     android:layout_height="wrap_content"
+     app:tab_indicator_color="@color/colorAccent"
+     app:tab_indicator_height="5dp"
+     app:tab_indicator_radius="5dp"
+     app:tab_text_select_color="@color/colorAccent"
+     app:tab_text_size="14sp"
+     app:tab_text_unselect_color="@color/colorPrimary" />
 ```
 
 ### Step3
@@ -79,11 +89,29 @@ mMultiLayout.setupWithViewPager(mViewPager);
   }
 ```
 
-## 截图
-
-![img](https://github.com/ixiaow/multilayout/blob/master/picture/demo.gif)
-
 ## Demo
 
-[sample](https://github.com/ixiaow/multilayout/tree/master/sample)
+具体的使用请看：[sample](https://github.com/ixiaow/multilayout/tree/master/sample)
+
+
+
+## 扩展属性
+
+`multilayout`支持一下扩展属性:
+
+|        Attribute        |  format   |        description        |
+| :---------------------: | :-------: | :-----------------------: |
+|     tab_text_width      | dimension |       tab文本的宽度       |
+|     tab_text_height     | dimension |       tab文本的高度       |
+|      tab_text_size      | dimension |     tab文本的字体大小     |
+|  tab_text_select_color  |   color   |  tab文本选中时的字体颜色  |
+| tab_text_unselect_color |   color   | tab文本字体未选中时的颜色 |
+|   tab_indicator_color   |   color   |   indicator指示器的颜色   |
+|   tab_indicator_width   | dimension |   indicator指示器的宽度   |
+|  tab_indicator_height   | dimension |   indicator指示器的高度   |
+|  tab_indicator_radius   | dimension | indicator指示器的圆角弧度 |
+
+
+
+
 

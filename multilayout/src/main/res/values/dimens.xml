@@ -3,4 +3,10 @@
     <dimen name="topic_tab_text_size">12sp</dimen>
     <dimen name="topic_tab_text_width">50dp</dimen>
     <dimen name="topic_tab_text_height">30dp</dimen>
+    <dimen name="tab_text_size">12sp</dimen>
+    <dimen name="tab_text_width">50dp</dimen>
+    <dimen name="tab_text_height">30dp</dimen>
+    <dimen name="tab_indicator_width">22dp</dimen>
+    <dimen name="tab_indicator_height">2dp</dimen>
+    <dimen name="tab_indicator_radius">1dp</dimen>
 </resources>

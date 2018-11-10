@@ -24,7 +24,7 @@ import com.ixiaow.multilayout.MultiLayout;
 public class TwoFragment extends Fragment {
 
 
-    private MultiLayout mTopicLayout;
+    private MultiLayout mMultiLayout;
     private static final String[] TAB_NAMES = {
             "全部", "赛事", "原创", "少年", "少女", "日漫",
             "杂志", "热血", "搞笑", "治愈", "惊秫", "古风",
@@ -47,12 +47,12 @@ public class TwoFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mTopicLayout = view.findViewById(R.id.topic_layout);
-//        mTopicLayout.setTabNames(Arrays.asList(TAB_NAMES));
+        mMultiLayout = view.findViewById(R.id.topic_layout);
+//        mMultiLayout.setTabNames(Arrays.asList(TAB_NAMES));
         mViewPager = view.findViewById(R.id.viewPager);
         final TopicAdapter topicAdapter = new TopicAdapter();
         mViewPager.setAdapter(topicAdapter);
-        mTopicLayout.setupWithViewPager(mViewPager);
+        mMultiLayout.setupWithViewPager(mViewPager);
 
         new Thread() {
             @Override
