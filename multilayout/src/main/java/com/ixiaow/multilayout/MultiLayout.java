@@ -240,6 +240,10 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        if (mMultiLayoutWidth == 0) {
+            mMultiLayoutWidth = getMeasuredWidth();
+        }
+
         if (isOnce || getChildCount() <= 0) { //防止多次测量
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             return;
@@ -359,11 +363,7 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
         Log.d(TAG, "update Tabs...");
         if (mMultiLayoutWidth == 0) {
             Log.d(TAG, "mMultiLayoutWidth is 0");
-            mMultiLayoutWidth = getMeasuredWidth();
-            Log.d(TAG, "getMeasuredWidth: " + mMultiLayoutWidth);
-            if (mMultiLayoutWidth == 0) {
-                return;
-            }
+            return;
         }
 
         this.removeAllViews();
