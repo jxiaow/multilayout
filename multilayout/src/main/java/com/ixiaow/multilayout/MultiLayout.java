@@ -230,6 +230,9 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
             }
             //默认选择第一个
             selectTabText(mTabTextList.get(0), 0);
+            if (mViewPager != null) {
+                mViewPager.setCurrentItem(0, false);
+            }
         }
 
         super.onLayout(changed, l, t, r, b);
@@ -237,7 +240,7 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if (isOnce || getChildCount() <= 0) { //防止多次测量
+        if (isOnce) { //防止多次测量
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             return;
         }
