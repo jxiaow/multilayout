@@ -240,52 +240,50 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if (mMultiLayoutWidth == 0) {
-            mMultiLayoutWidth = getMeasuredWidth();
-        }
+        if (!isOnce && getChildCount() > 0) { //防止多次测量
+            Log.d(TAG, "onMeasure");
+            //遍历当前控件的所有子控件
+            for (int i = 0; i < getChildCount(); i++) {
 
-        if (isOnce || getChildCount() <= 0) { //防止多次测量
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-            return;
-        }
-        Log.d(TAG, "onMeasure");
-        //遍历当前控件的所有子控件
-        for (int i = 0; i < getChildCount(); i++) {
+                LinearLayout linearLayout = (LinearLayout) getChildAt(i);
+                if (linearLayout.getChildCount() <= 0) {
+                    continue;
+                }
+                //测量子控件的实际宽度
+                int size = MeasureSpec.getSize(widthMeasureSpec);
+                //这里的测量会影响到布局，所以在最后需要调用super.onMeasure
+                int widthMeasure = MeasureSpec.makeMeasureSpec(size, MeasureSpec.AT_MOST);
+                linearLayout.measure(widthMeasure, heightMeasureSpec);
+                int measuredWidth = linearLayout.getMeasuredWidth();
+                //计算每个子控件中每个子控件需要的间隔距离
+                float margin = (mMultiLayoutWidth - measuredWidth) * 1.0f / linearLayout.getChildCount();
 
-            LinearLayout linearLayout = (LinearLayout) getChildAt(i);
-            if (linearLayout.getChildCount() <= 0) {
-                continue;
+                /*
+                 * 找出最小间隔
+                 */
+                if (i == 0) {
+                    mTabMinMargin = margin;
+                    continue;
+                }
+                if (margin < mTabMinMargin) {
+                    mTabMinMargin = margin;
+                }
+                Log.d(TAG, "linearLayout measureWidth: " + measuredWidth);
+
+                //取得最后一个child
+                View child = getChildAt(getChildCount() - 1);
+                LayoutParams lp = (LayoutParams) child.getLayoutParams();
+                //为了画indicator，所以最后一个child需要设置距离底部的距离
+                lp.bottomMargin = (int) (mIndicatorRectF.bottom - mIndicatorRectF.top);
+                child.setLayoutParams(lp);
             }
-            //测量子控件的实际宽度
-            int size = MeasureSpec.getSize(widthMeasureSpec);
-            //这里的测量会影响到布局，所以在最后需要调用super.onMeasure
-            int widthMeasure = MeasureSpec.makeMeasureSpec(size, MeasureSpec.AT_MOST);
-            linearLayout.measure(widthMeasure, heightMeasureSpec);
-            int measuredWidth = linearLayout.getMeasuredWidth();
-            //计算每个子控件中每个子控件需要的间隔距离
-            float margin = (mMultiLayoutWidth - measuredWidth) * 1.0f / linearLayout.getChildCount();
-
-            /*
-             * 找出最小间隔
-             */
-            if (i == 0) {
-                mTabMinMargin = margin;
-                continue;
-            }
-            if (margin < mTabMinMargin) {
-                mTabMinMargin = margin;
-            }
-            Log.d(TAG, "linearLayout measureWidth: " + measuredWidth);
-
-            //取得最后一个child
-            View child = getChildAt(getChildCount() - 1);
-            LayoutParams lp = (LayoutParams) child.getLayoutParams();
-            //为了画indicator，所以最后一个child需要设置距离底部的距离
-            lp.bottomMargin = (int) (mIndicatorRectF.bottom - mIndicatorRectF.top);
-            child.setLayoutParams(lp);
         }
         //这个是一定需要的，因为在上面已经测量了linearLayout这个地方需要复原
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+
+        if (mMultiLayoutWidth == 0) {
+            mMultiLayoutWidth = getMeasuredWidth();
+        }
     }
 
     @Override
