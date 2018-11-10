@@ -488,10 +488,10 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
         //tabText点击时，如果ViewPager不为空则需要与其联动
         int index = mTabNames.indexOf(textView.getText().toString());
         if (mViewPager != null) {
-            mViewPager.setCurrentItem(index, true);
-        } else { //如果ViewPager为空则自己处理状态选择事件
-            selectTabText(textView, index);
+            mViewPager.setCurrentItem(index, false);
         }
+        //处理状态选择事件
+        selectTabText(textView, index);
     }
 
     /**
