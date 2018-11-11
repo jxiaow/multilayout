@@ -67,9 +67,10 @@ mMultiLayout = findViewById(R.id.multi_layout);
 
 ```java
 //tabNames是一个String类型的List集合，代表tab的名称
-mMultiLayout.setTabNames(tabNames);
+mMultiLayout.initTabNames(tabNames);
+//更新tabNames
+mMultiLayout.updateTabNames(tabNames);
 ```
-
 与`ViewPager`组合使用：
 
 ```java

@@ -202,25 +202,30 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
          * 但是经过测试发现在这两个方法中进行更新tabs，添加进去的tabs不显示，通过测试才利用了
          * {@link getViewTreeObserver()#addOnGlobalLayoutListener}
          */
-        this.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        ViewTreeObserver viewTreeObserver = this.getViewTreeObserver();
+        viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN) //最小版本16
             @Override
             public void onGlobalLayout() {
                 Log.d(TAG, "onGlobalLayout...");
                 //移除当前监听器，不然会进行多次监听
-                MultiLayout.this.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 //获取当前控件的大小
                 mMultiLayoutWidth = getMeasuredWidth();
-                updateTabs();
+                if (mMultiLayoutWidth != 0) {
+                    Log.d(TAG, "mMultiLayoutWidth: " + mMultiLayoutWidth);
+                    getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    updateTabs();
+                }
             }
         });
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        Log.d(TAG, "onLayout...");
         //当tab全部添加完毕后，会调用此方法
         if (!isOnce && getChildCount() > 0) {
-            Log.d(TAG, "onLayout...");
+            Log.d(TAG, "layout");
             isOnce = true;//将其置为true,保证此方法只会调用一次
             //遍历所有的tabText，设置右边的margin
             for (TextView textView : mTabTextList) {
@@ -228,11 +233,12 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
                 layoutParams.rightMargin = (int) mTabMinMargin;
                 textView.setLayoutParams(layoutParams);
             }
+
             //默认选择第一个
-            selectTabText(mTabTextList.get(0), 0);
             if (mViewPager != null) {
                 mViewPager.setCurrentItem(0, false);
             }
+            selectTabText(mTabTextList.get(0), 0);
         }
 
         super.onLayout(changed, l, t, r, b);
@@ -240,8 +246,9 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if (!isOnce && getChildCount() > 0) { //防止多次测量
-            Log.d(TAG, "onMeasure");
+        Log.d(TAG, "onMeasure...");
+        if (!isOnce && getChildCount() > 0) {
+            Log.d(TAG, "measure");
             //遍历当前控件的所有子控件
             for (int i = 0; i < getChildCount(); i++) {
 
@@ -269,21 +276,18 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
                     mTabMinMargin = margin;
                 }
                 Log.d(TAG, "linearLayout measureWidth: " + measuredWidth);
-
-                //取得最后一个child
-                View child = getChildAt(getChildCount() - 1);
-                LayoutParams lp = (LayoutParams) child.getLayoutParams();
-                //为了画indicator，所以最后一个child需要设置距离底部的距离
-                lp.bottomMargin = (int) (mIndicatorRectF.bottom - mIndicatorRectF.top);
-                child.setLayoutParams(lp);
             }
-        }
-        //这个是一定需要的，因为在上面已经测量了linearLayout这个地方需要复原
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-        if (mMultiLayoutWidth == 0) {
-            mMultiLayoutWidth = getMeasuredWidth();
+            //取得最后一个child
+            View child = getChildAt(getChildCount() - 1);
+            LayoutParams lp = (LayoutParams) child.getLayoutParams();
+            //为了画indicator，所以最后一个child需要设置距离底部的距离
+            lp.bottomMargin = (int) (mIndicatorRectF.bottom - mIndicatorRectF.top);
+            child.setLayoutParams(lp);
+
+            setMeasuredDimension(widthMeasureSpec, heightMeasureSpec);
         }
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
     @Override
@@ -302,17 +306,10 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
     /**
      * 设置tab的名称
      *
-     * @param tabNames list
+     * @param tabNames tab名称集合
      */
-    public void setTabNames(List<String> tabNames) {
-
-        if (!isEmpty(mTabNames)) {
-            mTabNames.clear();//如果以前集合有数据则清空
-        }
-        mTabNames = tabNames;//tabs赋值
-        updateTabs();
-        isOnce = false;//如果新更新了tab，则需要重新测量和布局
-        requestLayout();//请求测量和布局
+    public void initTabNames(List<String> tabNames) {
+        updateTabNames(tabNames, false);
     }
 
     /**
@@ -351,7 +348,35 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
             CharSequence title = adapter.getPageTitle(i);
             tabNames.add((String) title);
         }
-        setTabNames(tabNames);
+
+        updateTabNames(tabNames, true);
+    }
+
+    /**
+     * 更新tabName
+     *
+     * @param tabNames tab名称集合
+     */
+    public void updateTabNames(List<String> tabNames) {
+        updateTabNames(tabNames, true);
+    }
+
+    /**
+     * 更新数据
+     *
+     * @param tabNames tab名称集合
+     * @param isUpdate true 更新tabText， false不更新
+     */
+    private void updateTabNames(List<String> tabNames, boolean isUpdate) {
+        if (!isEmpty(mTabNames)) {
+            mTabNames.clear();//如果以前集合有数据则清空
+        }
+        mTabNames = tabNames;//tabs赋值
+        if (isUpdate) {
+            updateTabs();
+        }
+        isOnce = false;//如果新更新了tab，则需要重新测量和布局
+        requestLayout();//请求测量和布局
     }
 
     /**
@@ -504,6 +529,9 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
      * @param index    当前textView在集合中的下标
      */
     private void selectTabText(@NonNull TextView textView, int index) {
+        if (mCurrentTabText == textView) {
+            return;
+        }
         //将其置为选择状态
         textView.setSelected(true);
         if (mCurrentTabText != null) {
@@ -521,30 +549,27 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
         }
     }
 
-
     @Override
     public void onPageScrolled(int position, float positionOffset,
                                int positionOffsetPixels) {
-
+        Log.d(TAG, "onPageScrolled");
     }
 
     @Override
     public void onPageSelected(int position) {
+        Log.d(TAG, "onPageSelected postion: " + position);
+        //根据viewPager页面切换时回调次方法，所以可以通过position获得tabText
+        if (isEmpty(mTabTextList)) {
+            return;
+        }
+        TextView textView = mTabTextList.get(position);
+        //选择当前tabText
+        selectTabText(textView, position);
     }
 
     @Override
     public void onPageScrollStateChanged(int state) {
-        //当viewPager已经滑动到新的页面的时候调用
-        if (state == ViewPager.SCROLL_STATE_SETTLING) {
-            //根据viewPager页面切换时回调次方法，所以可以通过position获得tabText
-            if (isEmpty(mTabTextList)) {
-                return;
-            }
-            int currentItem = mViewPager.getCurrentItem();
-            TextView textView = mTabTextList.get(currentItem);
-            //选择当前tabText
-            selectTabText(textView, currentItem);
-        }
+        Log.d(TAG, "onPageScrollStateChanged:  " + state);
     }
 
 
@@ -592,7 +617,7 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
      * @param collection 集合
      * @return true 为空，false不为空
      */
-    public static boolean isEmpty(Collection<?> collection) {
+    public boolean isEmpty(Collection<?> collection) {
         return collection == null || collection.isEmpty();
     }
 
