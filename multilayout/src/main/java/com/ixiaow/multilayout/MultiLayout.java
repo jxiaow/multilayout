@@ -494,7 +494,7 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
         translateY = (int) ((indexOfChild((View) textView.getParent()) + 1) * mTabHeight);
         mIndicatorTranslateX = translateX;
         mIndicatorTranslateY = translateY;
-        postInvalidate();
+        invalidate();
     }
 
     /*
@@ -508,18 +508,22 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
 
     @Override
     public void onClick(View v) {
+        if (mCurrentTabText == v) {
+            return;
+        }
 
         if (!(v instanceof TextView)) {
             return;
         }
+
         TextView textView = (TextView) v;
         //tabText点击时，如果ViewPager不为空则需要与其联动
-        int index = mTabNames.indexOf(textView.getText().toString());
+        int index = mTabTextList.indexOf(textView);
+        //处理状态选择事件
+        selectTabText(textView, index);
         if (mViewPager != null) {
             mViewPager.setCurrentItem(index, false);
         }
-        //处理状态选择事件
-        selectTabText(textView, index);
     }
 
     /**
@@ -529,9 +533,6 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
      * @param index    当前textView在集合中的下标
      */
     private void selectTabText(@NonNull TextView textView, int index) {
-        if (mCurrentTabText == textView) {
-            return;
-        }
         //将其置为选择状态
         textView.setSelected(true);
         if (mCurrentTabText != null) {
@@ -563,6 +564,9 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
             return;
         }
         TextView textView = mTabTextList.get(position);
+        if (mCurrentTabText == textView) {
+            return;
+        }
         //选择当前tabText
         selectTabText(textView, position);
     }
