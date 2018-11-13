@@ -380,6 +380,15 @@ public class MultiLayout extends LinearLayout implements View.OnClickListener,
     }
 
     /**
+     * 获取tabText之间的距离
+     *
+     * @return tabText之间的距离值
+     */
+    public float getTabMinMargin() {
+        return mTabMinMargin;
+    }
+
+    /**
      * 根据tabNames中的数据去更新view
      */
     private void updateTabs() {
